@@ -14,7 +14,6 @@ const Readable = require('stream').Readable
 const ScoreDocsOnField = require('./lib/ScoreDocsOnField.js').ScoreDocsOnField
 const ScoreTopScoringDocsTFIDF = require('./lib/ScoreTopScoringDocsTFIDF.js').ScoreTopScoringDocsTFIDF
 const SortTopScoringDocs = require('./lib/SortTopScoringDocs.js').SortTopScoringDocs
-const bunyan = require('bunyan')
 const levelup = require('levelup')
 const matcher = require('./lib/matcher.js')
 const siUtil = require('./lib/siUtil.js')
@@ -153,7 +152,6 @@ const initModule = function (err, Searcher, moduleReady) {
 
   return moduleReady(err, Searcher)
 }
-
 const getOptions = function (options, done) {
   var Searcher = {}
   Searcher.options = Object.assign({}, {
@@ -166,12 +164,14 @@ const getOptions = function (options, done) {
     nGramLength: 1,
     nGramSeparator: ' ',
     separator: /[|' .,\-|(\n)]+/,
-    stopwords: []
+    stopwords: [],
+    log: {
+      debug: options.logLevel === 'debug' ? console.log : () => {},
+      info: console.info,
+      warn: console.warn,
+      error: console.error
+    }
   }, options)
-  Searcher.options.log = bunyan.createLogger({
-    name: 'search-index',
-    level: options.logLevel
-  })
   if (!options.indexes) {
     levelup(Searcher.options.indexPath || 'si', {
       valueEncoding: 'json'
