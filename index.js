@@ -166,7 +166,7 @@ const getOptions = function (options, done) {
     separator: /[|' .,\-|(\n)]+/,
     stopwords: [],
     log: {
-      debug: options.logLevel === 'debug' ? console.log : () => {},
+      debug: options.logLevel === 'debug' ? console.log : function() {},
       info: console.info,
       warn: console.warn,
       error: console.error
